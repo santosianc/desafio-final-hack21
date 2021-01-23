@@ -42,14 +42,14 @@ api.findById = (request, response) => {
 
 api.delete = (request, response) => {
     const {id} = request.params;
-    neDB.remove({_id: id}, { multi: true }).sort({ customerName: 1 }).exec((exception, cards) => {
+    neDB.remove({_id: id}, { multi: true }, (exception, cards) => {
         if (exception) {
             const setence = 'Deu ruim na tentativa de deletar o card '+id+"!";
             console.log(setence, exception)
             response.status(exception.status | 400)
             response.json({ 'mensagem': setence })
         }
-        response.json(cards)
+        response.status(204).json({});
     })
 }
 
@@ -57,15 +57,16 @@ api.delete = (request, response) => {
 api.update = (request, response) => {
     const {id} = request.params;
     const card = request.body;
-    neDB.update({_id: id}, card, { multi: true }).sort({ customerName: 1 }).exec((exception, card) => {
+    card._id = id;
+    neDB.update({_id: id}, card, { multi: true },(exception, card) => {
         if (exception) {
             const setence = 'Deu ruim na tentativa de editar o card '+id+"!";
             console.log(setence, exception)
             response.status(exception.status | 400)
             response.json({ 'mensagem': setence })
-        }
-        response.json(card)
+        }        
     })
+    response.status(204).json({});
 }
 
 api.pagination = (request, response) => {
